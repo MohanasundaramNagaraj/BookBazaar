@@ -10,7 +10,7 @@ and placing orders.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
-- Images(#images)
+- [Images](#images)
 
 ## Features
 
