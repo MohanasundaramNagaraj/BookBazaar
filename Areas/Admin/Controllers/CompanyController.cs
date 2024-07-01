@@ -1,0 +1,68 @@
+﻿using BookBazaar.Entities;
+using BookBazaar.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace BookBazaar.Areas.Admin.Controllers
+{
+    [Area("Admin")]
+    [Authorize(Roles = "Admin, SuperAdmin")]
+    public class CompanyController : Controller
+    {
+        private readonly IUnitOfWork<Company> _company;
+
+        public CompanyController(IUnitOfWork<Company> company)
+        {
+            _company = company;
+        }
+
+
+
+        // GET: CompanyController
+        public async Task<IActionResult> Index()
+        {
+            IEnumerable<Company> companies = await _company.Entity.GetAllAsync();
+            return View(companies);
+        }
+
+        // GET: BookController/Upsert/5
+        public async Task<IActionResult> Upsert(int? id)
+        {
+            Company company = new();
+
+            if (id == null || id == 0)
+                return View(company);
+            else
+            {
+                company = await _company.Entity.GetFirstOrDefaultAsync(u => u.Id == id);
+                return View(company);
+            }
+        }
+
+        // POST: BookController/Upsert/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> Upsert(Company company)
+        {
+            if (ModelState.IsValid)
+            {
+
+
+                if (company.Id == 0)
+                    await _company.Entity.InsertAsync(company);
+
+                else
+                {
+                    await _company.Entity.UpdateAsync(company);
+                }
+
+                await _company.CompleteAsync();
+                TempData["Success"] = "Company saved successfully.";
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(company);
+        }
+    }
+}

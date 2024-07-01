@@ -1,0 +1,145 @@
+﻿@* @model IEnumerable<BookBazaar.Entities.Book>
+@using BookBazaar.Entities;
+@using BookBazaar.Utilities
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "BookBazaar";
+#pragma warning disable
+}
+
+
+<br />
+<div class="row">
+    @foreach (var Book in Model)
+    {
+        <div class="col-md-6 col-lg-4 col-xs-6 border-primary mb-3">
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="card-header text-white" style="background:linear-gradient(to right, #6f444d 0%, #f6edb5 100%);">
+                            <p class="card-text">
+                                <h5 class="card-title">
+                                    @Book.Title
+                                </h5>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="@Book.ImageUrl" alt="@Book.Title" class="w-100 h-equal">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <p class="card-text"><b>Category: </b>@Book.Category.Name</p>
+                            <p class="card-text"><b>By: </b>@Book.Author.FullName</p>
+                            <p class="card-text"><b>Price:</b> <strike>@Book.Price.ToString("c")</strike></p>
+                            <p class="card-text"><b>As low as: </b>@(((Book.Price)*(0.9)).ToString())</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card-footer">
+                            <div class="row justify-content-between">
+
+                                <a class="btn btn-outline-primary" style="width:40%;" asp-action="Details" asp-route-BookId="@Book.Id">
+                                    <i class="bi bi-eye-fill"></i> Show Details
+                                </a>
+                                @if (Book.InStock > 0)
+                                {
+                                    <span class="badge bg-success w-25" style="height:22px;">
+                                        In Stock: @Book.InStock
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger w-25" style="height:22px;">
+                                        <strike>In Stock: 0</strike>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+ *@
+    
+@model IEnumerable<BookBazaar.Entities.Book>
+@using BookBazaar.Entities;
+@using BookBazaar.Utilities
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "BookBazaar";
+#pragma warning disable
+}
+
+<style>
+    .card-img-top {
+        object-fit: cover;
+        height: 250px; /* Adjust the height as needed */
+        width: 100%;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .card-category, .card-author, .card-price, .card-discount-price {
+        font-size: 0.9rem;
+    }
+
+        .card-price strike {
+            color: #d9534f;
+        }
+
+    .badge-success, .badge-danger {
+        font-size: 0.8rem;
+    }
+</style>
+
+<br />
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var Book in Model.OrderByDescending(x=>x.Id))
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="@Book.ImageUrl" alt="@Book.Title" class="card-img-top">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title">@Book.Title</h5>
+                            <div style="float:right">
+                                @if (Book.InStock > 0)
+                                {
+                                    <span class="badge bg-success">In Stock: @Book.InStock</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                }
+                            </div>
+                        </div>
+
+                        <p class="card-mlacitation"> @Book.MlaCitation</p>
+                       @*  <p class="card-category"> @Book.Category.Name</p>
+                        <p class="card-author"> @Book.Author.FullName</p> *@
+                        <p class="card-price"><strike>@Book.Price.ToString("c")</strike> &nbsp;&nbsp;   @((Book.Price * 0.9).ToString("c"))</p>
+                        <p class="card-discount-price"> </p>
+                        <div class="mt-auto">
+                            <a class="btn btn-outline-primary w-100 mb-2" asp-action="Details" asp-route-BookId="@Book.Id">
+                                <i class="bi bi-eye-fill"></i> Show Details
+                            </a>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
